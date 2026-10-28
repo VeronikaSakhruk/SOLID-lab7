@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+class Route <<ConcretePrototype>> {
+  -name : String
+  -date : String
+  -schedule : String
+  -courier : String
+  -stops : List<Stop>
+  -restrictions : Map<String, Integer>
+  -Route(name, date, schedule, courier, stops, restrictions)
+  +{static} buildReference(name : String) : Route
+  +copy(date : String) : Route
+  +setCourier(courier : String) : void
+  +addStop(stop : Stop) : void
+  +setRestriction(key : String, value : int) : void
+  +describe() : String
+}
+
+class Stop <<NestedPrototype>> {
+  -name : String
+  -tariff : double
+  -warehouseContact : String
+  +Stop(name, tariff, warehouseContact)
+  +copy() : Stop
+  +toString() : String
+}
+
+class Main <<Client>> {
+  -{static} demonstrateRoutes() : void
+}
+
+class Log <<Utility>> {
+  +{static} log(source : String, event : String) : void
+  +{static} work(source : String, event : String, millis : int) : void
+}
+
+Route "1" *-- "1..*" Stop : stops
+Route ..> Route : <<create>> deep copy
+Main ..> Route : <<use>>
+Main ..> Stop : <<create>>
+Route ..> Log
+Stop ..> Stop : <<create>>
+
+note right of Route
+  copy() clones the reference route:
+  new stops list, new Stop objects,
+  new restrictions map
+end note
+@enduml

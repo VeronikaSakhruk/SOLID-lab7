@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+class VanPool <<ObjectPool>> {
+  -allVans : List<Van>
+  -freeVans : Deque<Van>
+  -waitingCouriers : Queue<String>
+  +VanPool(size : int)
+  +acquire(courier : String) : Van
+  +release(van : Van) : Van
+  +printStatistics() : void
+}
+
+class Van <<PooledObject>> {
+  -id : String
+  -courier : String
+  -parcels : List<String>
+  -trips : int
+  ~Van(id : String)
+  +getId() : String
+  +getCourier() : String
+  +getParcels() : List<String>
+  +getTrips() : int
+  +load(parcel : String) : void
+  ~assign(courier : String) : void
+  ~reset() : void
+}
+
+class Main <<Client>> {
+  -{static} demonstrateVans() : void
+}
+
+class Log <<Utility>> {
+  +{static} log(source : String, event : String) : void
+  +{static} work(source : String, event : String, millis : int) : void
+}
+
+VanPool "1" o-- "3" Van : manages
+Main ..> VanPool : <<use>>
+Main ..> Van : <<use>>
+VanPool ..> Van : <<create>>
+Van ..> Log
+VanPool ..> Log
+
+note right of VanPool
+  Strategy: FIFO queue of waiting couriers.
+  Vans are created once, reset on release
+  and reused without preparation.
+end note
+@enduml

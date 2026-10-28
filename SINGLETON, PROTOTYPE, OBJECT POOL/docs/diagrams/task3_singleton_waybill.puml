@@ -1,0 +1,32 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+class WaybillService <<Singleton>> {
+  -{static} instance : WaybillService
+  -id : String
+  -lastNumber : long
+  -WaybillService()
+  +{static} getInstance() : WaybillService
+  +nextNumber() : long
+  +getId() : String
+}
+
+class Main <<Client>> {
+  -{static} demonstrateWaybills() : void
+}
+
+class Log <<Utility>> {
+  +{static} log(source : String, event : String) : void
+}
+
+WaybillService "1" --> "1" WaybillService : instance
+Main ..> WaybillService : <<use>>
+WaybillService ..> Log
+
+note right of WaybillService
+  Branch #1, Branch #2 and Online cabinet
+  all obtain the same instance via getInstance().
+  The private constructor prevents other instances.
+end note
+@enduml
